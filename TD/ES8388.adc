@@ -1,0 +1,17 @@
+set_pin_assignment	{ aud_adcdat }	{ LOCATION = R14; }
+set_pin_assignment	{ aud_bclk }	{ LOCATION = M6; }
+set_pin_assignment	{ aud_dacdat }	{ LOCATION = P6; }
+set_pin_assignment	{ aud_lrc }	{ LOCATION = M7; }
+set_pin_assignment	{ aud_mclk }	{ LOCATION = N5; }
+set_pin_assignment	{ aud_scl }	{ LOCATION = R12; }
+set_pin_assignment	{ aud_sda }	{ LOCATION = R9; }
+set_pin_assignment	{ ilaclk }	{ LOCATION = T5; }
+set_pin_assignment	{ led }	{ LOCATION = B14; }
+set_pin_assignment	{ sys_clk }	{ LOCATION = R7; }
+set_pin_assignment	{ sys_rst_n }	{ LOCATION = A9; }
+set_pin_assignment	{ volume[0] }	{ LOCATION = A10; }
+set_pin_assignment	{ volume[1] }	{ LOCATION = B10; }
+set_pin_assignment	{ play_enable }	{ LOCATION = A14; }
+set_pin_assignment	{ filter_enable }	{ LOCATION = A13; }
+set_pin_assignment	{ filter_led }	{ LOCATION = E16; }
+set_pin_assignment	{ play_led }	{ LOCATION = F16; }
