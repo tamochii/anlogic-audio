@@ -1,76 +1,72 @@
 module es8388_ctrl(
-    input                clk        ,   // Ê±ï¿½ï¿½ï¿½Åºï¿½
-    input                rst_n      ,   // ï¿½ï¿½Î»ï¿½Åºï¿½
+    input                clk        ,   // Ê±ÖÓÐÅºÅ
+    input                rst_n      ,   // ¸´Î»ÐÅºÅ
     
     //audio interface(mast  
-    input                aud_bclk   ,   // es8388Î»Ê±ï¿½ï¿½
-    input                aud_lrc    ,   // ï¿½ï¿½ï¿½ï¿½ï¿½Åºï¿½
-    input                aud_adcdat ,   // ï¿½ï¿½Æµï¿½ï¿½ï¿½ï¿½
-    output               aud_dacdat ,   // ï¿½ï¿½Æµï¿½ï¿½ï¿½
+    input                aud_bclk   ,   // es8388Î»Ê±ÖÓ
+    input                aud_lrc    ,   // ¶ÔÆëÐÅºÅ
+    input                aud_adcdat ,   // ÒôÆµÊäÈë
+    output               aud_dacdat ,   // ÒôÆµÊä³ö
     
     //control interfac  
-    output               aud_scl    ,   // es8388ï¿½ï¿½SCLï¿½Åºï¿½
-    inout                aud_sda    ,   // es8388ï¿½ï¿½SDAï¿½Åºï¿½
+    output               aud_scl    ,   // es8388µÄSCLÐÅºÅ
+    inout                aud_sda    ,   // es8388µÄSDAÐÅºÅ
     
     //user i    
-    output     [31:0]    adc_data   ,   // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æµï¿½ï¿½ï¿½ï¿½
-    input      [31:0]    dac_data   ,   // Æµ
+    output     [31:0]    adc_data   ,   // ÊäÈëµÄÒôÆµÊý¾Ý
+    input      [31:0]    dac_data   ,   // Êä³öµÄÒôÆµÊý¾Ý
 	 
-	 input      [1:0]    volume     ,    //
-    input                fir_enable ,   // FIR filter enable
-    input                play_enable,   // Playback enable
-    output               rx_done    ,   // Ò»Î²É¼
-    output               tx_done        // Ò»Î·
+	 input      [1:0]    volume     ,    //ÒôÁ¿ÅäÖÃÊäÈë
+    output               rx_done    ,   // Ò»´Î²É¼¯Íê³É
+    output               tx_done        // Ò»´Î·¢ËÍÍê³É
 );
 
 //parameter define
-parameter    WL = 6'd24;                // word lengthï¿½ï¿½Æµï¿½Ö³ï¿½ï¿½ï¿½ï¿½ï¿½
+parameter    WL = 6'd24;                // word lengthÒôÆµ×Ö³¤¶¨Òå
 
 //*****************************************************
 //**                    main code
 //*****************************************************
 
-//ï¿½ï¿½ï¿½ï¿½es8388ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½
+//Àý»¯es8388¼Ä´æÆ÷ÅäÖÃÄ£¿é
 es8388_config #(
     .WL             (WL)
 ) u_es8388_config(
-    .clk            (clk),              // Ê±ï¿½ï¿½ï¿½Åºï¿½
-    .rst_n          (rst_n),            // ï¿½ï¿½Î»ï¿½Åºï¿½
+    .clk            (clk),              // Ê±ÖÓÐÅºÅ
+    .rst_n          (rst_n),            // ¸´Î»ÐÅºÅ
     
-	 .volume       (volume),          //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	 .volume       (volume),          //ÒôÁ¿ÅäÖÃÊäÈë
 	 
-    .aud_scl        (aud_scl),          // es8388ï¿½ï¿½SCLÊ±ï¿½ï¿½
-    .aud_sda        (aud_sda)           // es8388ï¿½ï¿½SDAï¿½Åºï¿½
+    .aud_scl        (aud_scl),          // es8388µÄSCLÊ±ÖÓ
+    .aud_sda        (aud_sda)           // es8388µÄSDAÐÅºÅ
 );
 
-//ï¿½ï¿½ï¿½ï¿½es8388ï¿½ï¿½Æµï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½
+//Àý»¯es8388ÒôÆµ½ÓÊÕÄ£¿é
 audio_receive #(
     .WL             (WL)
 ) u_audio_receive(    
-    .rst_n          (rst_n),            // Î»Åº
+    .rst_n          (rst_n),            // ¸´Î»ÐÅºÅ
     
-    .aud_bclk       (aud_bclk),         // es8388Î»Ê±
-    .aud_lrc        (aud_lrc),          // Åº
-    .aud_adcdat     (aud_adcdat),       // Æµ
-    .fir_enable     (fir_enable),
+    .aud_bclk       (aud_bclk),         // es8388Î»Ê±ÖÓ
+    .aud_lrc        (aud_lrc),          // ¶ÔÆëÐÅºÅ
+    .aud_adcdat     (aud_adcdat),       // ÒôÆµÊäÈë
         
-    .adc_data       (adc_data),         // FPGAÕµ
-    .rx_done        (rx_done)           // FPGA
+    .adc_data       (adc_data),         // FPGA½ÓÊÕµÄÊý¾Ý
+    .rx_done        (rx_done)           // FPGA½ÓÊÕÊý¾ÝÍê³É
 );
 
-//ï¿½ï¿½ï¿½ï¿½es8388ï¿½ï¿½Æµï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½
+//Àý»¯es8388ÒôÆµ·¢ËÍÄ£¿é
 audio_send #(
     .WL             (WL)
 ) u_audio_send(
-    .rst_n          (rst_n),            // Î»Åº
+    .rst_n          (rst_n),            // ¸´Î»ÐÅºÅ
         
-    .aud_bclk       (aud_bclk),         // es83888Î»Ê±
-    .aud_lrc        (aud_lrc),          // Åº
-    .aud_dacdat     (aud_dacdat),       // ï¿½ï¿½Æµ
-    
-    .play_enable    (play_enable),
-    .dac_data       (dac_data),         // Ô¤Æµ
-    .tx_done        (tx_done)           // Åº
+    .aud_bclk       (aud_bclk),         // es83888Î»Ê±ÖÓ
+    .aud_lrc        (aud_lrc),          // ¶ÔÆëÐÅºÅ
+    .aud_dacdat     (aud_dacdat),       // ÒôÆµÊý¾ÝÊä³ö
+        
+    .dac_data       (dac_data),         // Ô¤Êä³öµÄÒôÆµÊý¾Ý
+    .tx_done        (tx_done)           // ·¢ËÍÍê³ÉÐÅºÅ
 );
 
-endmodule
+endmodule 

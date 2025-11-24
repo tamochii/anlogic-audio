@@ -1,32 +1,31 @@
-module audio_send #(parameter WL = 6'd32) (    // WL(word lengthï¿½ï¿½Æµï¿½Ö³ï¿½ï¿½ï¿½ï¿½ï¿½)
+module audio_send #(parameter WL = 6'd32) (    // WL(word lengthÒôÆµ×Ö³¤¶¨Òå)
     //system reset
-    input                  rst_n     ,         // ï¿½ï¿½Î»ï¿½Åºï¿½
+    input                  rst_n     ,         // ¸´Î»ÐÅºÅ
 
     //wm8978 interface
-    input                  aud_bclk  ,         // es8388Î»Ê±ï¿½ï¿½
-    input                  aud_lrc   ,         // ï¿½ï¿½ï¿½ï¿½ï¿½Åºï¿½
-    output   reg           aud_dacdat,         // ï¿½ï¿½Æµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    input                  aud_bclk  ,         // es8388Î»Ê±ÖÓ
+    input                  aud_lrc   ,         // ¶ÔÆëÐÅºÅ
+    output   reg           aud_dacdat,         // ÒôÆµÊý¾ÝÊä³ö
     //user interface
-    input                  play_enable,      // Playback enable
-    input         [31:0]   dac_data  ,         // Ô¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æµï¿½ï¿½ï¿½ï¿½
-    output   reg           tx_done             // ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ÆµÎ»ï¿½ï¿½ï¿½ï¿½ï¿½
+    input         [31:0]   dac_data  ,         // Ô¤Êä³öµÄÒôÆµÊý¾Ý
+    output   reg           tx_done             // ·¢ËÍÒ»´ÎÒôÆµÎ»ÊýÍê³É
 );
 
 //reg define
-reg              aud_lrc_d0;                   // ï¿½Ó³ï¿½Ò»ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-(* mark_debug = "true" *) reg    [ 5:0]    tx_cnt;                       // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¼ï¿½ï¿½ï¿½
-reg    [31:0]    dac_data_t;                   // Ô¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æµï¿½ï¿½ï¿½Ýµï¿½ï¿½Ý´ï¿½Öµ
+reg              aud_lrc_d0;                   // ÑÓ³ÙÒ»¸öÊ±ÖÓÖÜÆÚ
+(* mark_debug = "true" *) reg    [ 5:0]    tx_cnt;                       // ·¢ËÍÊý¾Ý¼ÆÊý
+reg    [31:0]    dac_data_t;                   // Ô¤Êä³öµÄÒôÆµÊý¾ÝµÄÔÝ´æÖµ
 
 //wire define
-(* mark_debug = "true" *) wire             lrc_edge;                     //// ï¿½ï¿½ï¿½ï¿½ï¿½Åºï¿½
+(* mark_debug = "true" *) wire             lrc_edge;                     //// ±ßÑØÐÅºÅ
 
 //*****************************************************
 //**                    main code
 //*****************************************************
 
-assign  lrc_edge = aud_lrc ^ aud_lrc_d0;     // LRCï¿½ÅºÅµÄ±ï¿½ï¿½Ø¼ï¿½ï¿½
+assign  lrc_edge = aud_lrc ^ aud_lrc_d0;     // LRCÐÅºÅµÄ±ßÑØ¼ì²â
 
-//Îªï¿½ï¿½ï¿½ï¿½aud_lrcï¿½ä»¯ï¿½ÄµÚ¶ï¿½ï¿½ï¿½AUD_BCLKï¿½ï¿½ï¿½ï¿½ï¿½Ø²É¼ï¿½aud_adcdat,ï¿½Ó³Ù´ï¿½ï¿½Ä²É¼ï¿½
+//ÎªÁËÔÚaud_lrc±ä»¯µÄµÚ¶þ¸öAUD_BCLKÉÏÉýÑØ²É¼¯aud_adcdat,ÑÓ³Ù´òÅÄ²É¼¯
 always @(posedge aud_bclk or negedge rst_n) begin
     if(!rst_n)
         aud_lrc_d0 <= 1'b0;
@@ -34,7 +33,7 @@ always @(posedge aud_bclk or negedge rst_n) begin
         aud_lrc_d0 <= aud_lrc;
 end
 
-//ï¿½ï¿½ï¿½ï¿½32Î»ï¿½ï¿½Æµï¿½ï¿½ï¿½ÝµÄ¼ï¿½ï¿½ï¿½
+//·¢ËÍ32Î»ÒôÆµÊý¾ÝµÄ¼ÆÊý
 always @(posedge aud_bclk or negedge rst_n) begin
     if(!rst_n) begin
         tx_cnt     <=  6'd0;
@@ -48,7 +47,7 @@ always @(posedge aud_bclk or negedge rst_n) begin
         tx_cnt <= tx_cnt + 1'b1;
 end
 
-//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Åºï¿½
+//·¢ËÍÍê³ÉÐÅºÅ
 always @(posedge aud_bclk or negedge rst_n) begin
     if(!rst_n) begin
         tx_done <= 1'b0;
@@ -59,15 +58,15 @@ always @(posedge aud_bclk or negedge rst_n) begin
         tx_done <= 1'b0;
 end
 
-//ï¿½ï¿½Ô¤ï¿½ï¿½ï¿½Íµï¿½ï¿½ï¿½Æµï¿½ï¿½ï¿½Ý´ï¿½ï¿½Ð·ï¿½ï¿½Í³ï¿½È¥
+//°ÑÔ¤·¢ËÍµÄÒôÆµÊý¾Ý´®ÐÐ·¢ËÍ³öÈ¥
 always @(negedge aud_bclk or negedge rst_n) begin
     if(!rst_n) begin
         aud_dacdat <= 1'b0;
     end
-    else if(tx_cnt < WL && play_enable) // Only send data if play_enable is high
+    else if(tx_cnt < WL)
         aud_dacdat <= dac_data_t[WL - 1'd1 - tx_cnt];
     else
-        aud_dacdat <= 1'b0; // Otherwise, send silence
+        aud_dacdat <= 1'b0;
 end
 
 endmodule

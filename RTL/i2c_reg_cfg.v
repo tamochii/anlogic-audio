@@ -1,28 +1,38 @@
 module i2c_reg_cfg (
-    input                clk      ,     // i2c_reg_cfgÇý¶¯Ê±ÖÓ£¨ËÄ±¶ÓÚSCLµÄÆµÂÊ£©
-    input                rst_n    ,     // ¸´Î»ÐÅºÅ
-    input                i2c_done ,     // I2CÒ»´Î²Ù×÷Íê³É·´À¡ÐÅºÅ
-    input        [1:0]   volume   ,     // ¶ú»úÒôÁ¿Ñ¡ÔñÊäÈë
-    output  reg          i2c_exec ,     // I2C´¥·¢Ö´ÐÐÐÅºÅ
-    output  reg          cfg_done ,     // es8388ÅäÖÃÍê³É
-    output  reg  [15:0]  i2c_data       // ¼Ä´æÆ÷Êý¾Ý(µØÖ·+Êý¾Ý)
+    input                clk      ,     // i2c_reg_cfgï¿½ï¿½ï¿½ï¿½Ê±ï¿½Ó£ï¿½ï¿½Ä±ï¿½ï¿½ï¿½SCLï¿½ï¿½Æµï¿½Ê£ï¿½
+    input                rst_n    ,     // ï¿½ï¿½Î»ï¿½Åºï¿½
+    input                i2c_done ,     // I2CÒ»ï¿½Î²ï¿½ï¿½ï¿½ï¿½ï¿½É·ï¿½ï¿½ï¿½ï¿½Åºï¿½
+    input        [1:0]   volume   ,     // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    output  reg          i2c_exec ,     // I2Cï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½Åºï¿½
+    output  reg          cfg_done ,     // es8388ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    output  reg  [15:0]  i2c_data       // ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½Ö·+ï¿½ï¿½ï¿½ï¿½)
 );
 
 //parameter define
-parameter  WL           = 6'd32;        // word lengthÒôÆµ×Ö³¤²ÎÊýÉèÖÃ
+parameter  WL           = 6'd32;        // word lengthï¿½ï¿½Æµï¿½Ö³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 //parameter define
-localparam REG_NUM      = 5'd27;        // ×Ü¹²ÐèÒªÅäÖÃµÄ¼Ä´æÆ÷¸öÊý
-localparam SPEAK_VOLUME = 6'd63;        // À®°ÈÊä³öÒôÁ¿´óÐ¡²ÎÊý£¨0~63£©
+localparam REG_NUM      = 5'd27;        // ï¿½Ü¹ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ÃµÄ¼Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+localparam SPEAK_VOLUME = 6'd63;        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0~63ï¿½ï¿½
 
 
 //reg define
-reg    [1:0]  wl            ;           // word lengthÒôÆµ×Ö³¤²ÎÊý¶¨Òå
-reg    [7:0]  start_init_cnt;           // ³õÊ¼»¯ÑÓÊ±¼ÆÊýÆ÷
-reg    [4:0]  init_reg_cnt  ;           // ¼Ä´æÆ÷ÅäÖÃ¸öÊý¼ÆÊýÆ÷
-reg    [5:0]  phone_volume  ;           // ¶ú»úÊä³öÒôÁ¿´óÐ¡²ÎÊý£¨0~63£©,Ä¬ÈÏ40
+reg    [1:0]  wl            ;           // word lengthï¿½ï¿½Æµï¿½Ö³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+reg    [7:0]  start_init_cnt;           // ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+reg    [4:0]  init_reg_cnt  ;           // ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+reg    [5:0]  phone_volume  ;           // Ð¡0~63,Ä¬40
 
-//ÒôÁ¿ÉèÖÃ
+reg    [1:0]  volume_old;
+wire          vol_changed;
+
+always @(posedge clk or negedge rst_n) begin
+    if(!rst_n) volume_old <= 2'b00;
+    else volume_old <= volume;
+end
+
+assign vol_changed = (volume != volume_old) && cfg_done;
+
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 always @ (volume) begin
     case(volume)
         2'b00 : phone_volume = 6'd15;
@@ -37,7 +47,7 @@ end
 //**                    main code
 //*****************************************************
 
-//ÒôÆµ×Ö³¤£¨Î»Êý£©²ÎÊýÉèÖÃ
+//ï¿½ï¿½Æµï¿½Ö³ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 always @(posedge clk or negedge rst_n) begin
     if(!rst_n)
         wl <= 2'b00;
@@ -53,15 +63,17 @@ always @(posedge clk or negedge rst_n) begin
     end
 end
 
-//ÉÏµç»ò¸´Î»ºóÑÓÊ±Ò»¶ÎÊ±¼ä
+//ÏµÎ»Ê±Ò»Ê±
 always @(posedge clk or negedge rst_n) begin
     if(!rst_n)
+        start_init_cnt <= 8'd0;
+    else if(vol_changed)
         start_init_cnt <= 8'd0;
     else if(start_init_cnt < 8'hff)
         start_init_cnt <= start_init_cnt + 1'b1;
 end
 
-//´¥·¢I2C²Ù×÷
+//ï¿½ï¿½ï¿½ï¿½I2Cï¿½ï¿½ï¿½ï¿½
 always @(posedge clk or negedge rst_n) begin
     if(!rst_n)
         i2c_exec <= 1'b0;
@@ -73,80 +85,84 @@ always @(posedge clk or negedge rst_n) begin
         i2c_exec <= 1'b0;
 end
 
-//ÅäÖÃ¼Ä´æÆ÷¼ÆÊý
+//ï¿½ï¿½ï¿½Ã¼Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 always @(posedge clk or negedge rst_n) begin
     if(!rst_n)
+        init_reg_cnt <= 5'd0;
+    else if(vol_changed)
         init_reg_cnt <= 5'd0;
     else if(i2c_exec)
         init_reg_cnt <= init_reg_cnt + 1'b1;
 end
 
-//¼Ä´æÆ÷ÅäÖÃÍê³ÉÐÅºÅ
+//ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Åºï¿½
 always @(posedge clk or negedge rst_n) begin
     if(!rst_n)
+        cfg_done <= 1'b0;
+    else if(vol_changed)
         cfg_done <= 1'b0;
     else if(i2c_done & (init_reg_cnt == REG_NUM) )
         cfg_done <= 1'b1;
 end
 
-//ÅäÖÃI2CÆ÷¼þÄÚ¼Ä´æÆ÷µØÖ·¼°ÆäÊý¾Ý
+//ï¿½ï¿½ï¿½ï¿½I2Cï¿½ï¿½ï¿½ï¿½ï¿½Ú¼Ä´ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 always @(posedge clk or negedge rst_n) begin
     if(!rst_n)
         i2c_data <= 16'b0;
     else begin
         case(init_reg_cnt)
-                    // R0,ADC²ÉÑùÂÊ=DAC²ÉÑùÂÊ,Ê¹ÄÜVREFºÍVMID
+                    // R0,ADCï¿½ï¿½ï¿½ï¿½ï¿½ï¿½=DACï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,Ê¹ï¿½ï¿½VREFï¿½ï¿½VMID
             5'd0 : i2c_data <= {8'h00 ,8'h16};
-                    // R1,´ò¿ªËùÓÐµçÔ´
+                    // R1,ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½Ô´
             5'd1 : i2c_data <= {8'h01 ,8'h00};
-                    // R2,´ò¿ªËùÓÐµçÔ´
+                    // R2,ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½Ô´
             5'd2 : i2c_data <= {8'h02 ,8'h00};
-                    // R3,´ò¿ªADCµçÔ´
+                    // R3,ï¿½ï¿½ADCï¿½ï¿½Ô´
             5'd3: i2c_data <=  {8'h03 ,8'h00};
-                    // R4,´ò¿ªDACµçÔ´
+                    // R4,ï¿½ï¿½DACï¿½ï¿½Ô´
             5'd4 : i2c_data <= {8'h04 ,8'h3c};
-                    // R8,Ö÷Ä£Ê½£¬MCLK²»·ÖÆµ£¬BCLK×Ô¶¯
+                    // R8,ï¿½ï¿½Ä£Ê½ï¿½ï¿½MCLKï¿½ï¿½ï¿½ï¿½Æµï¿½ï¿½BCLKï¿½Ô¶ï¿½
             5'd5 : i2c_data <= {8'h08 ,8'h80};
-                    // R9£¬Âó¿Ë·çÔöÒæ6dB
+                    // R9ï¿½ï¿½ï¿½ï¿½Ë·ï¿½ï¿½ï¿½ï¿½ï¿½6dB
             5'd6 : i2c_data <= {8'h09 ,8'h22};
-                    // R12, ADCÉèÖÃÎª24bit I2SÄ£Ê½
+                    // R12, ADCï¿½ï¿½ï¿½ï¿½Îª24bit I2SÄ£Ê½
             5'd7 : i2c_data <= {8'h0c,8'h00};
-                    // R13,ÉèÖÃADC²ÉÑùÂÊ12.288/256 = 48KSPS
+                    // R13,ï¿½ï¿½ï¿½ï¿½ADCï¿½ï¿½ï¿½ï¿½ï¿½ï¿½12.288/256 = 48KSPS
             5'd8 : i2c_data <= {8'h0d,8'h02};
-                    // R16,ÉèÖÃ×óADCÊý¿ØÒôÁ¿Ë¥¼õÎª0dB
+                    // R16,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ADCï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¥ï¿½ï¿½Îª0dB
             5'd9 : i2c_data <= {8'h10,8'h00};
-                    // R17,ÉèÖÃÓÒADCÊý¿ØÒôÁ¿Ë¥¼õÎª0dB
+                    // R17,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ADCï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¥ï¿½ï¿½Îª0dB
             5'd10: i2c_data <= {8'h11,8'h00};
-                    // R18,ALCºÍPGAÔöÒæ·¶Î§Éè¶¨
+                    // R18,ALCï¿½ï¿½PGAï¿½ï¿½ï¿½æ·¶Î§ï¿½è¶¨
             5'd11: i2c_data <= {8'h12,8'h00};
-                    // R23, DACÉèÖÃÎª24bit I2SÄ£Ê½
+                    // R23, DACï¿½ï¿½ï¿½ï¿½Îª24bit I2SÄ£Ê½
             5'd12: i2c_data <= {8'h17,8'h00};
-                    // R24,ÉèÖÃDAC²ÉÑùÂÊ12.288/256 = 48KSPS
+                    // R24,ï¿½ï¿½ï¿½ï¿½DACï¿½ï¿½ï¿½ï¿½ï¿½ï¿½12.288/256 = 48KSPS
             5'd13: i2c_data <= {8'h18,8'h02};
-                    // R26,ÉèÖÃ×óDACÊý¿ØÒôÁ¿Ë¥¼õÎª0dB
+                    // R26,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½DACï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¥ï¿½ï¿½Îª0dB
             5'd14: i2c_data <= {8'h1a,8'h00 };
-                    // R27,ÉèÖÃÓÒDACÊý¿ØÒôÁ¿Ë¥¼õÎª0dB
+                    // R27,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½DACï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¥ï¿½ï¿½Îª0dB
             5'd15: i2c_data <= {8'h1b,8'h00};
-                    // R39,×óDAC MIXERÉèÖÃÊ¹ÄÜ
+                    // R39,ï¿½ï¿½DAC MIXERï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½
             5'd16: i2c_data <= {8'h27,8'hB8};
-                    // R42,ÓÒDAC MIXERÉèÖÃÊ¹ÄÜ
+                    // R42,ï¿½ï¿½DAC MIXERï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½
             5'd17: i2c_data <= {8'h2a,8'hB8};
-                    // R43,ADCºÍDACÊ¹ÓÃÍ¬Ò»¸öLRC
+                    // R43,ADCï¿½ï¿½DACÊ¹ï¿½ï¿½Í¬Ò»ï¿½ï¿½LRC
             5'd18: i2c_data <= {8'h2b,8'h80};
-            // LOUT1Êä³öÒôÁ¿¿ØÖÆ£ºÉèÖÃ-6dBË¥¼õ
-            5'd19: i2c_data <= {8'h2e,8'h1A};
-            // ROUT1Êä³öÒôÁ¿¿ØÖÆ£ºÉèÖÃ-6dBË¥¼õ
-            5'd20: i2c_data <= {8'h2f,8'h1A};
-            //LOUT2Êä³öÒôÁ¿¿ØÖÆ£ºÉèÖÃ-6dBË¥¼õ
-            5'd21: i2c_data <= {8'h30,8'h1A};
-             //ROUT2Êä³öÒôÁ¿¿ØÖÆ£ºÉèÖÃ-6dBË¥¼õ
-            5'd22: i2c_data <= {8'h31,8'h1A};
-            //R10,ADCÊäÈëÑ¡Ôñ£¬0x00Îª1Í¨µÀÊäÈë£¨Âó¿Ë·ç£©£¬0x50Îª2Í¨µÀÊäÈë£¨Line-in£©
+            // LOUT1
+            5'd19: i2c_data <= {8'h2e, 2'b00, phone_volume};
+            // ROUT1
+            5'd20: i2c_data <= {8'h2f, 2'b00, phone_volume};
+            // LOUT2
+            5'd21: i2c_data <= {8'h30, 2'b00, phone_volume};
+            // ROUT2
+            5'd22: i2c_data <= {8'h31, 2'b00, phone_volume};
+            //R10,ADC
             5'd23: i2c_data <= {8'h0a,8'h00};
-            5'd26: i2c_data <= {8'hff, 8'hff}; /* WAIT_DLL: µÈ´ý 1~5 ms£¨FSM ÖÐÊµÏÖ£© */
+            5'd26: i2c_data <= {8'hff, 8'hff}; /* WAIT_DLL: ï¿½È´ï¿½ 1~5 msï¿½ï¿½FSM ï¿½ï¿½Êµï¿½Ö£ï¿½ */
             default : ;
         endcase
     end
 end
 
-endmodule 
+endmodule

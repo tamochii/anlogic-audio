@@ -1,0 +1,44 @@
+standard
+***Report Model: audio_speak Device: EG4S20BG256***
+
+IO Statistics
+#IO                        27
+  #input                   13
+  #output                  13
+  #inout                    1
+
+Gate Statistics
+#Basic gates              904
+  #and                    191
+  #nand                     0
+  #or                     276
+  #nor                      0
+  #xor                      1
+  #xnor                     0
+  #buf                      0
+  #not                     48
+  #bufif1                   1
+  #MX21                    92
+  #FADD                     0
+  #DFF                    295
+  #LATCH                    0
+#MACRO_ADD                 38
+#MACRO_EQ                  45
+#MACRO_MUX                314
+#MACRO_OTHERS               1
+
+Report Hierarchy Area:
++-----------------------------------------------------------------------+
+|Instance                 |Module               |gates  |seq    |macros |
++-----------------------------------------------------------------------+
+|top                      |audio_speak          |609    |295    |84     |
+|  u_audio_eq             |audio_eq             |2      |72     |8      |
+|  u_audio_led_visualizer |audio_led_visualizer |104    |61     |21     |
+|  u_es8388_ctrl          |es8388_ctrl          |501    |154    |53     |
+|    u_audio_receive      |audio_receive        |26     |56     |5      |
+|    u_audio_send         |audio_send           |1      |25     |0      |
+|    u_es8388_config      |es8388_config        |474    |73     |48     |
+|      u_i2c_dri          |i2c_dri              |467    |42     |40     |
+|      u_i2c_reg_cfg      |i2c_reg_cfg          |7      |31     |8      |
+|  u_pll_clk              |clk_wiz_0            |0      |0      |1      |
++-----------------------------------------------------------------------+

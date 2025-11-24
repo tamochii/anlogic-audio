@@ -1,48 +1,32 @@
-module audio_receive #(parameter WL = 6'd32) (      // WL(word lengthï¿½ï¿½Æµï¿½Ö³ï¿½ï¿½ï¿½ï¿½ï¿½)
+module audio_receive #(parameter WL = 6'd32) (      // WL(word lengthÒôÆµ×Ö³¤¶¨Òå)
     //system clock 50MHz
-    input                 rst_n     ,               // ï¿½ï¿½Î»ï¿½Åºï¿½
+    input                 rst_n     ,               // ¸´Î»ÐÅºÅ
 
     //wm8978 interface
-    input                 aud_bclk  ,               // es8388Î»Ê±ï¿½ï¿½
-    input                 aud_lrc   ,               // ï¿½ï¿½ï¿½ï¿½ï¿½Åºï¿½
-    input                 aud_adcdat,               // ï¿½ï¿½Æµï¿½ï¿½ï¿½ï¿½
-    input                 fir_enable,               // FIR filter enable signal
+    input                 aud_bclk  ,               // es8388Î»Ê±ÖÓ
+    input                 aud_lrc   ,               // ¶ÔÆëÐÅºÅ
+    input                 aud_adcdat,               // ÒôÆµÊäÈë
 
     //user interface
-   (* mark_debug = "true" *)  output   reg          rx_done   ,               // FPGAï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-    output   reg [31:0]   adc_data                  // FPGAï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½
-);
-
-// Internal wire for unfiltered data
-wire signed [31:0] adc_data_unfiltered;
-wire signed [31:0] adc_data_filtered;
-
-// Instantiate the FIR filter
-fir_filter #(
-    .DATA_WIDTH(32),
-    .TAPS_N(16)
-) fir_lowpass_filter (
-    .clk(aud_bclk),
-    .rst_n(rst_n),
-    .data_in(adc_data_unfiltered),
-    .data_out(adc_data_filtered)
+   (* mark_debug = "true" *)  output   reg          rx_done   ,               // FPGA½ÓÊÕÊý¾ÝÍê³É
+    output   reg [31:0]   adc_data                  // FPGA½ÓÊÕµÄÊý¾Ý
 );
 
 //reg define
-reg              aud_lrc_d0;                        // aud_lrcï¿½Ó³ï¿½Ò»ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-(* mark_debug = "true" *) reg    [ 5:0]    rx_cnt;                            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¼ï¿½ï¿½ï¿½
-reg    [31:0]    adc_data_t;                        // Ô¤ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æµï¿½ï¿½ï¿½Ýµï¿½ï¿½Ý´ï¿½Öµ
+reg              aud_lrc_d0;                        // aud_lrcÑÓ³ÙÒ»¸öÊ±ÖÓÖÜÆÚ
+(* mark_debug = "true" *) reg    [ 5:0]    rx_cnt;                            // ·¢ËÍÊý¾Ý¼ÆÊý
+reg    [31:0]    adc_data_t;                        // Ô¤Êä³öµÄÒôÆµÊý¾ÝµÄÔÝ´æÖµ
 
 //wire define
-(* mark_debug = "true" *) wire             lrc_edge ;                         // ï¿½ï¿½ï¿½ï¿½ï¿½Åºï¿½
+(* mark_debug = "true" *) wire             lrc_edge ;                         // ±ßÑØÐÅºÅ
 
 //*****************************************************
 //**                    main code
 //*****************************************************
 
-assign   lrc_edge = aud_lrc ^ aud_lrc_d0;           // LRCï¿½ÅºÅµÄ±ï¿½ï¿½Ø¼ï¿½ï¿½
+assign   lrc_edge = aud_lrc ^ aud_lrc_d0;           // LRCÐÅºÅµÄ±ßÑØ¼ì²â
 
-//Îªï¿½ï¿½ï¿½ï¿½aud_lrcï¿½ä»¯ï¿½ÄµÚ¶ï¿½ï¿½ï¿½AUD_BCLKï¿½ï¿½ï¿½ï¿½ï¿½Ø²É¼ï¿½aud_adcdat,ï¿½Ó³Ù´ï¿½ï¿½Ä²É¼ï¿½
+//ÎªÁËÔÚaud_lrc±ä»¯µÄµÚ¶þ¸öAUD_BCLKÉÏÉýÑØ²É¼¯aud_adcdat,ÑÓ³Ù´òÅÄ²É¼¯
 always @(posedge aud_bclk or negedge rst_n) begin
     if(!rst_n)
         aud_lrc_d0 <= 1'b0;
@@ -50,7 +34,7 @@ always @(posedge aud_bclk or negedge rst_n) begin
         aud_lrc_d0 <= aud_lrc;
 end
 
-//ï¿½É¼ï¿½32Î»ï¿½ï¿½Æµï¿½ï¿½ï¿½ÝµÄ¼ï¿½ï¿½ï¿½
+//²É¼¯32Î»ÒôÆµÊý¾ÝµÄ¼ÆÊý
 always @(posedge aud_bclk or negedge rst_n) begin
     if(!rst_n) begin
         rx_cnt <= 6'd0;
@@ -61,7 +45,7 @@ always @(posedge aud_bclk or negedge rst_n) begin
         rx_cnt <= rx_cnt + 1'b1;
 end
 
-//ï¿½Ñ²É¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½
+//°Ñ²É¼¯µ½µÄÒôÆµÊý¾ÝÁÙÊ±´æ·ÅÔÚÒ»¸ö¼Ä´æÆ÷ÄÚ
 always @(posedge aud_bclk or negedge rst_n) begin
     if(!rst_n) begin
         adc_data_t <= 32'b0;
@@ -70,26 +54,18 @@ always @(posedge aud_bclk or negedge rst_n) begin
         adc_data_t[WL - 1'd1 - rx_cnt] <= aud_adcdat;
 end
 
-//ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ý´ï¿½ï¿½Ý¸ï¿½adc_data,ï¿½ï¿½Ê¹ï¿½ï¿½rx_done,ï¿½ï¿½ï¿½ï¿½Ò»ï¿½Î²É¼ï¿½ï¿½ï¿½ï¿½
+//°ÑÁÙÊ±Êý¾Ý´«µÝ¸øadc_data,²¢Ê¹ÄÜrx_done,±íÃ÷Ò»´Î²É¼¯Íê³É
 always @(posedge aud_bclk or negedge rst_n) begin
     if(!rst_n) begin
         rx_done   <=  1'b0;
+        adc_data  <= 32'b0;
     end
     else if(rx_cnt == WL) begin
         rx_done <= 1'b1;
+        adc_data<= adc_data_t;
     end
     else
         rx_done <= 1'b0;
 end
 
-assign adc_data_unfiltered = adc_data_t;
-
-always @(*) begin
-    if (fir_enable) begin
-        adc_data = adc_data_filtered;
-    end else begin
-        adc_data = adc_data_unfiltered;
-    end
-end
-
-endmodule
+endmodule 

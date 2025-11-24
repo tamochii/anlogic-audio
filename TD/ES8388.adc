@@ -6,12 +6,31 @@ set_pin_assignment	{ aud_mclk }	{ LOCATION = N5; }
 set_pin_assignment	{ aud_scl }	{ LOCATION = R12; }
 set_pin_assignment	{ aud_sda }	{ LOCATION = R9; }
 set_pin_assignment	{ ilaclk }	{ LOCATION = T5; }
-set_pin_assignment	{ led }	{ LOCATION = B14; }
 set_pin_assignment	{ sys_clk }	{ LOCATION = R7; }
-set_pin_assignment	{ sys_rst_n }	{ LOCATION = A9; }
-set_pin_assignment	{ volume[0] }	{ LOCATION = A10; }
-set_pin_assignment	{ volume[1] }	{ LOCATION = B10; }
-set_pin_assignment	{ play_enable }	{ LOCATION = A14; }
-set_pin_assignment	{ filter_enable }	{ LOCATION = A13; }
-set_pin_assignment	{ filter_led }	{ LOCATION = E16; }
-set_pin_assignment	{ play_led }	{ LOCATION = F16; }
+set_pin_assignment	{ switch_mute }	{ LOCATION = A14; }
+
+set_pin_assignment	{ volume[1] }	{ LOCATION = A13; }
+
+set_pin_assignment	{ volume[0] }	{ LOCATION = B12; }
+
+set_pin_assignment	{ sw_treble_up }	{ LOCATION = A12; }
+
+set_pin_assignment	{ sw_treble_down }	{ LOCATION = A11; }
+
+set_pin_assignment	{ sw_bass_up }	{ LOCATION = B10; }
+
+set_pin_assignment	{ sw_bass_down }	{ LOCATION = A10; }
+
+
+set_pin_assignment	{ sw_visualizer }	{ LOCATION = A9; }
+
+set_pin_assignment	{ led_visualizer[0] }	{ LOCATION = F16; }
+set_pin_assignment	{ led_visualizer[1] }	{ LOCATION = E16; }
+set_pin_assignment	{ led_visualizer[2] }	{ LOCATION = E13; }
+set_pin_assignment	{ led_visualizer[3] }	{ LOCATION = C16; }
+set_pin_assignment	{ led_visualizer[4] }	{ LOCATION = C15; }
+set_pin_assignment	{ led_visualizer[5] }	{ LOCATION = B16; }
+set_pin_assignment	{ led_visualizer[6] }	{ LOCATION = B15; }
+set_pin_assignment	{ led_visualizer[7] }	{ LOCATION = B14; }
+
+

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Project Version="3" Minor="2" Path="C:/Users/tamochi/Desktop/es8388v2/es8388/TD">
+<Project Version="3" Minor="2" Path="C:/Users/tamochi/Desktop/anlogic/es8388beta/TD">
     <Project_Created_Time></Project_Created_Time>
     <TD_Version>5.6.71036</TD_Version>
     <Name>ES8388</Name>
@@ -66,21 +66,12 @@
                     <Attr Name="CompileOrder" Val="7"/>
                 </FileInfo>
             </File>
-            <File Path="../RTL/fir_filter.v">
+            <File Path="../RTL/audio_eq.v">
                 <FileInfo>
                     <Attr Name="UsedInSyn" Val="true"/>
                     <Attr Name="UsedInP&R" Val="true"/>
                     <Attr Name="BelongTo" Val="design_1"/>
                     <Attr Name="CompileOrder" Val="9"/>
-                </FileInfo>
-            </File>
-            <File Path="../RTL/heavy_metal_fx.v">
-                <FileInfo>
-                    <Attr Name="AutoExcluded" Val="true"/>
-                    <Attr Name="UsedInSyn" Val="true"/>
-                    <Attr Name="UsedInP&R" Val="true"/>
-                    <Attr Name="BelongTo" Val="design_1"/>
-                    <Attr Name="CompileOrder" Val="10"/>
                 </FileInfo>
             </File>
             <File Path="../RTL/pll_clk.v">
@@ -89,7 +80,33 @@
                     <Attr Name="UsedInSyn" Val="true"/>
                     <Attr Name="UsedInP&R" Val="true"/>
                     <Attr Name="BelongTo" Val="design_1"/>
+                    <Attr Name="CompileOrder" Val="10"/>
+                </FileInfo>
+            </File>
+            <File Path="../RTL/vocal_isolation.v">
+                <FileInfo>
+                    <Attr Name="AutoExcluded" Val="true"/>
+                    <Attr Name="UsedInSyn" Val="true"/>
+                    <Attr Name="UsedInP&R" Val="true"/>
+                    <Attr Name="BelongTo" Val="design_1"/>
                     <Attr Name="CompileOrder" Val="11"/>
+                </FileInfo>
+            </File>
+            <File Path="../RTL/robot_voice_effect.v">
+                <FileInfo>
+                    <Attr Name="AutoExcluded" Val="true"/>
+                    <Attr Name="UsedInSyn" Val="true"/>
+                    <Attr Name="UsedInP&R" Val="true"/>
+                    <Attr Name="BelongTo" Val="design_1"/>
+                    <Attr Name="CompileOrder" Val="12"/>
+                </FileInfo>
+            </File>
+            <File Path="../RTL/audio_led_visualizer.v">
+                <FileInfo>
+                    <Attr Name="UsedInSyn" Val="true"/>
+                    <Attr Name="UsedInP&R" Val="true"/>
+                    <Attr Name="BelongTo" Val="design_1"/>
+                    <Attr Name="CompileOrder" Val="13"/>
                 </FileInfo>
             </File>
         </Verilog>

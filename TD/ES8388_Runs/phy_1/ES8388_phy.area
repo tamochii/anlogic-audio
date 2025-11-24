@@ -1,0 +1,96 @@
+standard
+***Report Model: audio_speak Device: EG4S20BG256***
+
+IO Statistics
+#IO                        27
+  #input                   13
+  #output                  13
+  #inout                    1
+
+Utilization Statistics
+#lut                      955   out of  19600    4.87%
+#reg                      290   out of  19600    1.48%
+#le                       991
+  #lut only               701   out of    991   70.74%
+  #reg only                36   out of    991    3.63%
+  #lut&reg                254   out of    991   25.63%
+#dsp                        0   out of     29    0.00%
+#bram                       0   out of     64    0.00%
+  #bram9k                   0
+  #fifo9k                   0
+#bram32k                    0   out of     16    0.00%
+#pad                       26   out of    188   13.83%
+  #ireg                     4
+  #oreg                     3
+  #treg                     1
+#pll                        1   out of      4   25.00%
+#gclk                       3   out of     16   18.75%
+
+Clock Resource Statistics
+Index     ClockNet                                           Type               DriverType         Driver                                                          Fanout
+#1        aud_bclk_dup_1                                     GCLK               io                 aud_bclk_syn_2.di                                               83
+#2        u_es8388_ctrl/u_es8388_config/u_i2c_dri/dri_clk    GCLK               mslice             u_es8388_ctrl/u_es8388_config/u_i2c_dri/dri_clk_reg_syn_9.q1    47
+#3        sys_clk_dup_1                                      GCLK               io                 sys_clk_syn_2.di                                                44
+#4        aud_mclk_dup_1                                     GCLK               pll                u_pll_clk/pll_inst.clkc1                                        0
+#5        u_pll_clk/clk0_buf                                 GCLK               pll                u_pll_clk/pll_inst.clkc0                                        0
+
+
+Detailed IO Report
+
+        Name           Direction    Location    IOStandard    DriveStrength    PullType     PackReg   
+     aud_adcdat          INPUT        R14        LVCMOS25          N/A          PULLUP       IREG     
+      aud_bclk           INPUT         M6        LVCMOS25          N/A          PULLUP       NONE     
+       aud_lrc           INPUT         M7        LVCMOS25          N/A          PULLUP       IREG     
+    sw_bass_down         INPUT        A10        LVCMOS25          N/A          PULLUP       NONE     
+     sw_bass_up          INPUT        B10        LVCMOS25          N/A          PULLUP       NONE     
+   sw_treble_down        INPUT        A11        LVCMOS25          N/A          PULLUP       NONE     
+    sw_treble_up         INPUT        A12        LVCMOS25          N/A          PULLUP       NONE     
+    sw_visualizer        INPUT         A9        LVCMOS25          N/A          PULLUP       NONE     
+     switch_mute         INPUT        A14        LVCMOS25          N/A          PULLUP       NONE     
+       sys_clk           INPUT         R7        LVCMOS25          N/A          PULLUP       NONE     
+      volume[1]          INPUT        A13        LVCMOS25          N/A          PULLUP       IREG     
+      volume[0]          INPUT        B12        LVCMOS25          N/A          PULLUP       IREG     
+     aud_dacdat         OUTPUT         P6        LVCMOS25           8            NONE        OREG     
+      aud_mclk          OUTPUT         N5        LVCMOS25           8            NONE        NONE     
+       aud_scl          OUTPUT        R12        LVCMOS25           8            NONE        OREG     
+       ilaclk           OUTPUT         T5        LVCMOS25           8            NONE        NONE     
+         led            OUTPUT        H16        LVCMOS25           8            N/A         NONE     
+  led_visualizer[7]     OUTPUT        B14        LVCMOS25           8            NONE        NONE     
+  led_visualizer[6]     OUTPUT        B15        LVCMOS25           8            NONE        NONE     
+  led_visualizer[5]     OUTPUT        B16        LVCMOS25           8            NONE        NONE     
+  led_visualizer[4]     OUTPUT        C15        LVCMOS25           8            NONE        NONE     
+  led_visualizer[3]     OUTPUT        C16        LVCMOS25           8            NONE        NONE     
+  led_visualizer[2]     OUTPUT        E13        LVCMOS25           8            NONE        NONE     
+  led_visualizer[1]     OUTPUT        E16        LVCMOS25           8            NONE        NONE     
+  led_visualizer[0]     OUTPUT        F16        LVCMOS25           8            NONE        NONE     
+       aud_sda           INOUT         R9        LVCMOS25           8           PULLUP     OREG;TREG  
+
+Report Hierarchy Area:
++----------------------------------------------------------------------------------------------------+
+|Instance                 |Module               |le     |lut     |ripple  |seq     |bram    |dsp     |
++----------------------------------------------------------------------------------------------------+
+|top                      |audio_speak          |991    |697     |258     |298     |0       |0       |
+|  u_audio_eq             |audio_eq             |195    |119     |56      |76      |0       |0       |
+|  u_audio_led_visualizer |audio_led_visualizer |440    |275     |165     |61      |0       |0       |
+|  u_es8388_ctrl          |es8388_ctrl          |316    |279     |27      |145     |0       |0       |
+|    u_audio_receive      |audio_receive        |85     |65      |12      |48      |0       |0       |
+|    u_audio_send         |audio_send           |42     |42      |0       |26      |0       |0       |
+|    u_es8388_config      |es8388_config        |189    |172     |15      |71      |0       |0       |
+|      u_i2c_dri          |i2c_dri              |112    |103     |7       |42      |0       |0       |
+|      u_i2c_reg_cfg      |i2c_reg_cfg          |77     |69      |8       |29      |0       |0       |
+|  u_pll_clk              |clk_wiz_0            |1      |1       |0       |0       |0       |0       |
++----------------------------------------------------------------------------------------------------+
+
+
+DataNet Average Fanout:
+
+   Index     Fanout     Nets  
+    #1          1       654   
+    #2          2       239   
+    #3          3        90   
+    #4          4        13   
+    #5        5-10       55   
+    #6        11-50      63   
+    #7       51-100      1    
+    #8       101-500     1    
+  Average     2.73            
