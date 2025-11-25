@@ -4,7 +4,7 @@
    Executable = D:/1.career/Anlogic/TD5.6.2/bin/td.exe
    Built at =   20:34:38 Mar 21 2023
    Run by =     tamochi
-   Run Date =   Mon Nov 24 19:37:30 2025
+   Run Date =   Tue Nov 25 19:57:20 2025
 
    Run on =     TAMOWIN
 ============================================================
@@ -519,5 +519,5 @@ RUN-1001 : Exported congestions
 RUN-1001 : Exported violations
 RUN-1001 : Exported IO constraints
 RUN-1001 : Exported Inst constraints
-RUN-1002 : start command "backup_run_log run.log ../.logs/syn_1/td_20251124_193730.log"
+RUN-1002 : start command "backup_run_log run.log ../.logs/syn_1/td_20251125_195720.log"
 RUN-1001 : Backing up run's log file succeed.

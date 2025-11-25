@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Project Version="3" Minor="2" Path="C:/Users/tamochi/Desktop/anlogic/es8388beta/TD">
+<Project Version="3" Minor="2" Path="C:/Users/tamochi/Desktop/anlogic-audio/TD">
     <Project_Created_Time></Project_Created_Time>
     <TD_Version>5.6.71036</TD_Version>
     <Name>ES8388</Name>
